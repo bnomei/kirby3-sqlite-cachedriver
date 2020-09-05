@@ -34,11 +34,6 @@ final class SQLiteCache extends FileCache
     private $selectStatement;
 
     /**
-     * @var string|null
-     */
-    private $previousStatement;
-
-    /**
      * @var int
      */
     private $transactionsCount = 0;

@@ -274,6 +274,11 @@ final class SQLiteCache extends FileCache
                 $key = $prefix . $i;
                 $driver->set($key, Str::random(1000));
             }
+            if ($label === 'sqlite') {
+                $this->endTransaction();
+                $this->applyPragmas('pragmas-destruct');
+                $this->database->close();
+            }
             echo $label . ' : ' . (microtime(true) - $time) . PHP_EOL;
         }
 

@@ -1,0 +1,2 @@
+<?php
+feather()->benchmark();

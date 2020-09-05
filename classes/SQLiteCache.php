@@ -258,19 +258,19 @@ final class SQLiteCache extends FileCache
         $sqlite = $this;
         $file = kirby()->cache('bnomei.sqlite-cachedriver'); // neat, right? ;-)
 
-        foreach(['sqlite' => $sqlite, 'file' => $file] as $label => $driver) {
+        foreach (['sqlite' => $sqlite, 'file' => $file] as $label => $driver) {
             $time = microtime(true);
-            for($i = 0; $i < $count; $i++) {
+            for ($i = 0; $i < $count; $i++) {
                 $key = $prefix . $i;
                 if (!$driver->get($key)) {
                     $driver->set($key, Str::random(1000));
                 }
             }
-            for($i = $count * 0.6; $i < $count * 0.8; $i++) {
+            for ($i = $count * 0.6; $i < $count * 0.8; $i++) {
                 $key = $prefix . $i;
                 $driver->remove($key);
             }
-            for($i = $count * 0.8; $i < $count; $i++) {
+            for ($i = $count * 0.8; $i < $count; $i++) {
                 $key = $prefix . $i;
                 $driver->set($key, Str::random(1000));
             }
@@ -283,7 +283,7 @@ final class SQLiteCache extends FileCache
         }
 
         // cleanup
-        for($i = 0; $i < $count; $i++) {
+        for ($i = 0; $i < $count; $i++) {
             $key = $prefix . $i;
             $driver->remove($key);
         }

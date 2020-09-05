@@ -1,4 +1,4 @@
-# Feather – Kirby 3 SQLITE Cache-Driver
+# Feather – Kirby 3 SQLite Cache-Driver
 
 ![Release](https://flat.badgen.net/packagist/v/bnomei/kirby3-sqlite-cachedriver?color=ae81ff)
 ![Downloads](https://flat.badgen.net/packagist/dt/bnomei/kirby3-sqlite-cachedriver?color=272822)

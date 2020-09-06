@@ -19,6 +19,8 @@ Kirby::plugin('bnomei/sqlite-cachedriver', [
         // https://sqlite.org/pragma.html
         'pragmas-construct' => function () {
             $defaults = [
+                'PRAGMA read_uncommitted = true;',
+                'PRAGMA busy_timeout = 5000;',
                 'PRAGMA main.cache_size = 10000;',
                 'PRAGMA case_sensitive_like = false',
                 'PRAGMA main.auto_vacuum = INCREMENTAL;',

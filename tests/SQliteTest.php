@@ -59,23 +59,18 @@ final class SQliteTest extends TestCase
 
     public function testTransaction()
     {
-        $count = $this->cache->transactionsCount();
-        $this->cache->flush();
-        $this->assertEquals($count, $this->cache->transactionsCount());
-
         // push into the transaction
+        $count = $this->cache->transactionsCount();
+        $this->cache->beginTransaction();
         for ($i = 0; $i < 10; $i++) {
             $this->assertTrue($this->cache->set(strval($i), time()));
         }
-        $this->assertEquals($count, $this->cache->transactionsCount());
+        $this->cache->endTransaction();
+        $this->assertEquals($count + 1, $this->cache->transactionsCount());
 
         // select from running transaction
         $this->assertIsInt($this->cache->get('1'));
         $this->assertIsInt($this->cache->get('2'));
-        $this->assertEquals($count, $this->cache->transactionsCount());
-
-        $this->cache->forceTransaction();
-        $this->assertIsInt($this->cache->get('3'));
         $this->assertEquals($count + 1, $this->cache->transactionsCount());
     }
 

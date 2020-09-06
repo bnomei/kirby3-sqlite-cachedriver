@@ -55,15 +55,15 @@ final class SQLiteCache extends FileCache
             $this->flush();
         }
 
-        $this->beginTransaction();
         $this->garbagecollect();
     }
 
     public function __destruct()
     {
-        $this->endTransaction();
-        $this->applyPragmas('pragmas-destruct');
-        $this->database->close();
+        if ($this->database) {
+            $this->applyPragmas('pragmas-destruct');
+            $this->database->close();
+        }
     }
 
     /**
@@ -215,21 +215,15 @@ final class SQLiteCache extends FileCache
         }
     }
 
-    private function beginTransaction()
+    public function beginTransaction()
     {
         $this->database->exec("BEGIN TRANSACTION;");
         $this->transactionsCount++;
     }
 
-    private function endTransaction()
+    public function endTransaction()
     {
         $this->database->exec("END TRANSACTION;");
-    }
-
-    public function forceTransaction()
-    {
-        $this->endTransaction();
-        $this->beginTransaction();
     }
 
     private function prepareStatements()
@@ -255,6 +249,9 @@ final class SQLiteCache extends FileCache
 
         foreach (['sqlite' => $sqlite, 'file' => $file] as $label => $driver) {
             $time = microtime(true);
+            if ($label === 'sqlite') {
+                $driver->beginTransaction();
+            }
             for ($i = 0; $i < $count; $i++) {
                 $key = $prefix . $i;
                 if (!$driver->get($key)) {
@@ -272,7 +269,7 @@ final class SQLiteCache extends FileCache
             if ($label === 'sqlite') {
                 $this->endTransaction();
                 $this->applyPragmas('pragmas-destruct');
-                $this->database->close();
+                $this->applyPragmas('pragmas-construct');
             }
             echo $label . ' : ' . (microtime(true) - $time) . PHP_EOL;
         }

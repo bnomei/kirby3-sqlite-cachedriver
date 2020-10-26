@@ -31,7 +31,7 @@ Kirby ships with built in support for File and Memcached Cache Drivers. I create
 
 Let's imaging this typical scenario: During a single pageview you need to access, 100 cached values. Some of them already exist, some not, some need to be refreshed and yet others need to be deleted. 
 With a File Cache this would cause at least 100 filesystem operations in total. Using this SQLite Cache you will have only 1 file read and maybe 1 file write per pageview no matter how many values you get, update or remove. ✌️
-But reading and writing data to SQLite is not instantaneous, so you it will be [at least 35% faster](https://www.hwaci.com/sw/sqlite/fasterthanfs.html).
+But reading and writing data to SQLite is not instantaneous, so it will be [at least 35% faster](https://www.hwaci.com/sw/sqlite/fasterthanfs.html).
 
 ## Usage 
 

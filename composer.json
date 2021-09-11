@@ -1,7 +1,7 @@
 {
   "name": "bnomei/kirby3-sqlite-cachedriver",
   "type": "kirby-plugin",
-  "version": "1.0.4",
+  "version": "1.1.0",
   "description": "SQLite based Cache-Driver",
   "license": "MIT",
   "authors": [
@@ -31,13 +31,13 @@
     "sort-packages": true
   },
   "require": {
-    "php": ">=7.2.0",
+    "php": ">=7.4.0",
     "getkirby/composer-installer": "^1.1"
   },
   "require-dev": {
-    "getkirby/cms": "^3.2",
+    "getkirby/cms": "^3.5",
     "php-coveralls/php-coveralls": "^2.1",
-    "phpunit/phpunit": "^8.3"
+    "phpunit/phpunit": "^9.5"
   },
   "scripts": {
     "analyze": "phpstan analyse classes",
@@ -61,7 +61,7 @@
     "kirby-cms-path": "tests/kirby"
   },
   "suggest": {
-    "bnomei/kirby3-page-sqlite": "Cache the content file using SQLite",
+    "bnomei/kirby3-boost": "Cache the content file using SQLite",
     "bnomei/kirby3-lapse": "Cache any data until set expiration time"
   }
 }

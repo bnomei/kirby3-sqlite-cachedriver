@@ -80,7 +80,7 @@ return [
 
 ### Setup Content-File Cache
 
-You can use a [seperate plugin](https://github.com/bnomei/kirby3-page-sqlite) to create [Page-Models](https://getkirby.com/docs/guide/templates/page-models) and extend the `\Bnomei\SQLitePage` class. That plugin does not require this plugin to be installed. It will read and write a **copy** of your Content-File to and from a seperate SQLite database. It will also automatically track modification of your content to keep it up to date.
+Use [Kirby 3 Boost](https://github.com/bnomei/kirby3-boost) to setup a cache for content files.
 
 ### Pragmas
 

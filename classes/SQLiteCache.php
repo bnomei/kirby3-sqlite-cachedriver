@@ -15,6 +15,8 @@ use SQLite3Stmt;
 final class SQLiteCache extends FileCache
 {
     public const DB_VERSION = '1';
+    public const DB_FILENAME = 'sqlitecache-';
+    public const DB_VALIDATE = 'sqlitecache-';
 
     /**
      * @var SQLite3
@@ -152,7 +154,7 @@ final class SQLiteCache extends FileCache
      */
     public function flush(): bool
     {
-        kirby()->cache('bnomei.sqlite-cachedriver')->remove(static::DB_VERSION);
+        kirby()->cache('bnomei.sqlite-cachedriver')->remove(static::DB_VALIDATE . static::DB_VERSION);
         $success = $this->database->exec("DELETE FROM cache WHERE id != '' ");
 
         if ($this->validate() === false) {
@@ -164,16 +166,17 @@ final class SQLiteCache extends FileCache
 
     public function validate(): bool
     {
-        if (kirby()->cache('bnomei.sqlite-cachedriver')->get(static::DB_VERSION)) {
-            return $this->get(static::DB_VERSION) != null;
+        $validate = static::DB_VALIDATE . static::DB_VERSION;
+        if (kirby()->cache('bnomei.sqlite-cachedriver')->get($validate)) {
+            return $this->get($validate) != null;
         }
 
         $time = time();
-        $this->set(static::DB_VERSION, $time, 0);
-        kirby()->cache('bnomei.sqlite-cachedriver')->set(static::DB_VERSION, $time, 0);
+        $this->set($validate, $time, 0);
+        kirby()->cache('bnomei.sqlite-cachedriver')->set($validate, $time, 0);
         // a get() is not perfect will not help since it might be just in memory
         // but the file created by file cache can be checked on next request
-        return $this->get(static::DB_VERSION) != null;
+        return $this->get($validate) != null;
     }
 
     public function garbagecollect(): bool
@@ -193,7 +196,7 @@ final class SQLiteCache extends FileCache
 
     private function loadDatabase()
     {
-        $file = $this->file(static::DB_VERSION);
+        $file = $this->file(static::DB_FILENAME . static::DB_VERSION);
         try {
             $this->database = new SQLite3($file);
         } catch (\Exception $exception) {
@@ -217,7 +220,10 @@ final class SQLiteCache extends FileCache
         $root = null;
         $cache = kirby()->cache('bnomei.sqlite-cachedriver');
         if (is_a($cache, FileCache::class)) {
-            $root = A::get($cache->options(), 'root') . '/' . A::get($cache->options(), 'prefix');
+            $root = A::get($cache->options(), 'root');
+            if ($prefix =  A::get($cache->options(), 'prefix')) {
+                $root .= '/' . $prefix;
+            }
         } else {
             $root = kirby()->roots()->cache();
         }

@@ -20,8 +20,8 @@ final class SQliteTest extends TestCase
 
     protected function tearDown(): void
     {
-        $this->cache->flush();
-        unset($this->cache);
+        //$this->cache->flush();
+        //unset($this->cache);
     }
 
     public function testConstruct()

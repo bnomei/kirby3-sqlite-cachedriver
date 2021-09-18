@@ -53,8 +53,12 @@ final class SQLiteCache extends FileCache
 
         if ($this->options['debug']) {
             $this->flush();
+        } else {
+            if ($this->validate() === false) {
+                throw new \Exception('SQLite Cache Driver failed to read/write. Check sqlite binary version or adjust pragmas used by plugin.');
+            }
         }
-
+        
         $this->garbagecollect();
     }
 
@@ -148,7 +152,28 @@ final class SQLiteCache extends FileCache
      */
     public function flush(): bool
     {
-        return $this->database->exec("DELETE FROM cache WHERE id != '' ");
+        kirby()->cache('bnomei.sqlite-cachedriver')->remove(static::DB_VERSION);
+        $success = $this->database->exec("DELETE FROM cache WHERE id != '' ");
+
+        if ($this->validate() === false) {
+            throw new \Exception('SQLite Cache Driver failed to read/write. Check sqlite binary version or adjust pragmas used by plugin.');
+        }
+
+        return $success;
+    }
+
+    public function validate(): bool
+    {
+        if (kirby()->cache('bnomei.sqlite-cachedriver')->get(static::DB_VERSION)) {
+            return $this->get(static::DB_VERSION) != null;
+        }
+
+        $time = time();
+        $this->set(static::DB_VERSION, $time, 0);
+        kirby()->cache('bnomei.sqlite-cachedriver')->set(static::DB_VERSION, $time, 0);
+        // a get() is not perfect will not help since it might be just in memory
+        // but the file created by file cache can be checked on next request
+        return $this->get(static::DB_VERSION) != null;
     }
 
     public function garbagecollect(): bool

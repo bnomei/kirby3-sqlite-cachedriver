@@ -20,7 +20,8 @@ final class SQliteTest extends TestCase
 
     protected function tearDown(): void
     {
-        // unset($this->cache);
+        $this->cache->flush();
+        unset($this->cache);
     }
 
     public function testConstruct()
@@ -45,7 +46,7 @@ final class SQliteTest extends TestCase
         $this->assertEquals('value', $this->cache->get('some'));
     }
 
-    public function testCacheWithWrite()
+    public function testCacheWithWriteAndRemove()
     {
         $date = date('c');
 
@@ -55,6 +56,11 @@ final class SQliteTest extends TestCase
 
         $this->cache = SQLiteCache::singleton();
         $this->assertEquals($date, $this->cache->get('persist'));
+        $this->assertTrue($this->cache->remove('persist', $date));
+        unset($this->cache); // will happen at end of pageview
+
+        $this->cache = SQLiteCache::singleton();
+        $this->assertNull($this->cache->get('persist'));
     }
 
     public function testTransaction()
@@ -128,6 +134,7 @@ final class SQliteTest extends TestCase
     public function testBenchmark()
     {
         $this->cache->benchmark(1000);
+        unset($this->cache); // will happen at end of pageview
         $this->assertTrue(true);
     }
 }

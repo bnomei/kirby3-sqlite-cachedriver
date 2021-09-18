@@ -2,4 +2,5 @@
 
 $kirby = new Kirby();
 
-echo $kirby->render();
+// do not render of it will render the default template code
+// echo $kirby->render();

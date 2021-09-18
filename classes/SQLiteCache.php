@@ -93,6 +93,11 @@ final class SQLiteCache extends FileCache
             return true;
         }
 
+        return $this->removeAndSet($key, $value, $minutes);
+    }
+
+    private function removeAndSet(string $key, $value, int $minutes = 0): bool
+    {
         $this->remove($key);
 
         $value = new Value($value, $minutes);
@@ -172,11 +177,15 @@ final class SQLiteCache extends FileCache
         }
 
         $time = time();
-        $this->set($validate, $time, 0);
+        $this->removeAndSet($validate, $time, 0);
         kirby()->cache('bnomei.sqlite-cachedriver')->set($validate, $time, 0);
+        
         // a get() is not perfect will not help since it might be just in memory
         // but the file created by file cache can be checked on next request
-        return $this->get($validate) != null;
+        // $this->get() will no work with debug mode but we need that in case of exceptions
+        // return $this->get($validate) != null;
+        // so we use parent which has no debug check clause
+        return parent::get($validate) != null;
     }
 
     public function garbagecollect(): bool

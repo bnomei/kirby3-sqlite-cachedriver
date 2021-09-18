@@ -55,7 +55,7 @@ final class SQLiteCache extends FileCache
             $this->flush();
         } else {
             if ($this->validate() === false) {
-                throw new \Exception('SQLite Cache Driver failed to read/write. Check SQLite binary version ('.SQLite3::version().') or adjust pragmas used by plugin.');
+                throw new \Exception('SQLite Cache Driver failed to read/write. Check SQLite binary version ('.SQLite3::version()['versionString'].') or adjust pragmas used by plugin.');
             }
         }
         
@@ -156,7 +156,7 @@ final class SQLiteCache extends FileCache
         $success = $this->database->exec("DELETE FROM cache WHERE id != '' ");
 
         if ($this->validate() === false) {
-            throw new \Exception('SQLite Cache Driver failed to read/write. Check SQLite binary version ('.SQLite3::version().') or adjust pragmas used by plugin.');
+            throw new \Exception('SQLite Cache Driver failed to read/write. Check SQLite binary version ('.SQLite3::version()['versionString'].') or adjust pragmas used by plugin.');
         }
 
         return $success;

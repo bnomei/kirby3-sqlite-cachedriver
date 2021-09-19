@@ -31,9 +31,9 @@ Feather - a highly performant SQLite Cache Driver for Kirby 3
 
 ## Why
 
-### File < SQLite < Memcached < Redis
+### Memcached < File < Redis < SQLite < APCu
 
-Kirby ships with built in support for File and Memcached Cache Drivers. I created a [Redis Cache Driver](https://github.com/bnomei/kirby3-redis-cachedriver) which is imho best suited for larger caches. If your hosting does not support Memcached or Redis your next best choice is this SQLite Cache Driver.
+Kirby ships with built in support for File, Memcached and APCu Cache Drivers. I created a [Redis Cache Driver](https://github.com/bnomei/kirby3-redis-cachedriver) which is imho best suited for larger caches. If your hosting does not support Memcached, APCu or Redis then your next best choice is this SQLite Cache Driver.
 
 ### 2 is enough and about 35% faster
 
@@ -73,7 +73,7 @@ file : 0.11837792396545
 
 When Kirbys global debug config is set to `true` the complete plugin cache will be flushed and no caches will be created. This will make you live easier – trust me.
 
-### How to use Feather with Lapse
+### How to use Feather with Lapse or Boost
 
 You need to set the cache driver for the [lapse plugin](https://github.com/bnomei/kirby3-lapse) to `sqlite`.
 
@@ -82,6 +82,7 @@ You need to set the cache driver for the [lapse plugin](https://github.com/bnome
 <?php
 return [
     'bnomei.lapse.cache' => ['type' => 'sqlite'],
+    'bnomei.boost.cache' => ['type' => 'sqlite'],
     //... other options
 ];
 ```
@@ -96,7 +97,7 @@ The plugin comes with aggressive defaults for SQLite Pragmas to optimize for per
 
 ## Dependencies
 
-- PHP SQLite extension
+- PHP SQLite extension. version 3.7.x or better.
 
 ## Disclaimer
 

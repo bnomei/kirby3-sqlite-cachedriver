@@ -1,4 +1,4 @@
-# Feather – Kirby 3 SQLite Cache-Driver
+# 🪶  Kirby3 SQLite Cache-Driver
 
 ![Release](https://flat.badgen.net/packagist/v/bnomei/kirby3-sqlite-cachedriver?color=ae81ff)
 ![Downloads](https://flat.badgen.net/packagist/dt/bnomei/kirby3-sqlite-cachedriver?color=272822)
@@ -7,13 +7,21 @@
 [![Maintainability](https://flat.badgen.net/codeclimate/maintainability/bnomei/kirby3-sqlite-cachedriver)](https://codeclimate.com/github/bnomei/kirby3-sqlite-cachedriver) 
 [![Twitter](https://flat.badgen.net/badge/twitter/bnomei?color=66d9ef)](https://twitter.com/bnomei)
 
-SQLite
-## Commercial Usage
+Feather - a highly peformant SQLite Cache Driver for Kirby 3
 
-This plugin is free (MIT license) but if you use it in a commercial project please consider to
-- [make a donation 🍻](https://www.paypal.me/bnomei/10) or
-- [buy me ☕](https://buymeacoff.ee/bnomei) or
-- [buy a Kirby license using this affiliate link](https://a.paddle.com/v2/click/1129/35731?link=1170)
+## Commerical Usage
+
+> <br>
+><b>Support open source!</b><br><br>
+> This plugin is free but if you use it in a commercial project please consider to sponsor me or make a donation.<br>
+> If my work helped you to make some cash it seems fair to me that I might get a little reward as well, right?<br><br>
+> Be kind. Share a little. Thanks.<br><br>
+> &dash; Bruno<br>
+> &nbsp; 
+
+| M | O | N | E | Y |
+|---|----|---|---|---|
+| [Github sponsor](https://github.com/sponsors/bnomei) | [Patreon](https://patreon.com/bnomei) | [Buy Me a Coffee](https://buymeacoff.ee/bnomei) | [Paypal dontation](https://www.paypal.me/bnomei/15) | [Buy a Kirby license using this affiliate link](https://a.paddle.com/v2/click/1129/35731?link=1170) |
 
 ## Installation
 

@@ -7,7 +7,7 @@
 [![Maintainability](https://flat.badgen.net/codeclimate/maintainability/bnomei/kirby3-sqlite-cachedriver)](https://codeclimate.com/github/bnomei/kirby3-sqlite-cachedriver) 
 [![Twitter](https://flat.badgen.net/badge/twitter/bnomei?color=66d9ef)](https://twitter.com/bnomei)
 
-Feather - a highly peformant SQLite Cache Driver for Kirby 3
+Feather - a highly performant SQLite Cache Driver for Kirby 3
 
 ## Commerical Usage
 

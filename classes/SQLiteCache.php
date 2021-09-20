@@ -264,6 +264,7 @@ final class SQLiteCache extends FileCache
     public function endTransaction()
     {
         $this->database->exec("END TRANSACTION;");
+        $this->transactionsCount = 0;
     }
 
     private function prepareStatements()
@@ -273,9 +274,6 @@ final class SQLiteCache extends FileCache
         $this->deleteStatement = $this->database->prepare("DELETE FROM cache WHERE id = :id");
     }
 
-    /**
-     * @return int
-     */
     public function transactionsCount(): int
     {
         return $this->transactionsCount;

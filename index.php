@@ -16,6 +16,7 @@ if (! function_exists('feather')) {
 Kirby::plugin('bnomei/sqlite-cachedriver', [
     'options' => [
         'cache' => true, // create cache folder
+        'store' => true, // php memory cache
         // https://sqlite.org/pragma.html
         'pragmas-construct' => function () {
             $defaults = [

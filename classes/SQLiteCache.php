@@ -55,6 +55,7 @@ final class SQLiteCache extends FileCache
         $this->database->exec('CREATE TABLE IF NOT EXISTS cache (id TEXT primary key unique, expire_at INTEGER, data TEXT)');
 
         $this->prepareStatements();
+        $this->store = [];
 
         if ($this->options['debug']) {
             $this->flush();
@@ -105,6 +106,11 @@ final class SQLiteCache extends FileCache
 
         $key = $this->key($key);
         $value = new Value($value, $minutes);
+
+        if ($this->option('store')) {
+            $this->store[$key] = $value;
+        }
+
         $expire = $value->expires();
         $data = htmlspecialchars($value->toJson(), ENT_QUOTES);
 
@@ -126,7 +132,7 @@ final class SQLiteCache extends FileCache
         $key = $this->key($key);
 
         $value = A::get($this->store, $key);
-        if (!$value) {
+        if ($value === null) {
             $this->selectStatement->bindValue(':id', $key, SQLITE3_TEXT);
             $this->selectStatement->bindValue(':expire_at', time(), SQLITE3_INTEGER);
             $results = $this->selectStatement->execute()->fetchArray(SQLITE3_ASSOC);
@@ -136,11 +142,11 @@ final class SQLiteCache extends FileCache
                 return null;
             }
             $value = htmlspecialchars_decode(strval($results['data']));
+            $value = $value ? Value::fromJson($value) : null;
         }
-        
-        return $value ? Value::fromJson($value) : null;
-    }
+        return $value;
 
+    }
 
     public function get(string $key, $default = null)
     {
@@ -179,9 +185,11 @@ final class SQLiteCache extends FileCache
         kirby()->cache('bnomei.sqlite-cachedriver')->remove(static::DB_VALIDATE . static::DB_VERSION);
         $success = $this->database->exec("DELETE FROM cache WHERE id != '' ");
 
+        /*
         if ($this->validate() === false) {
             throw new \Exception('SQLite Cache Driver failed to read/write. Check SQLite binary version ('.SQLite3::version()['versionString'].') or adjust pragmas used by plugin.');
         }
+        */
 
         return $success;
     }
@@ -226,16 +234,23 @@ final class SQLiteCache extends FileCache
         try {
             $this->database = new SQLite3($file);
         } catch (\Exception $exception) {
-            F::remove($file);
-            F::remove($file . '-wal');
-            F::remove($file . '-shm');
-            $this->database = new SQLite3($file);
+            $this->resetDB($file);
             throw new \Exception($exception->getMessage());
         }
     }
 
+    private function resetDB(string $file): void
+    {
+        kirby()->cache('bnomei.sqlite-cachedriver')->remove(static::DB_VALIDATE . static::DB_VERSION);
+        F::remove($file);
+        F::remove($file . '-wal');
+        F::remove($file . '-shm');
+        $this->database = new SQLite3($file);
+    }
+
     private function applyPragmas(string $pragmas)
     {
+        // TODO: recover from SQLite3::exec(): database is locked
         foreach ($this->options[$pragmas] as $pragma) {
             $this->database->exec($pragma);
         }
@@ -256,11 +271,14 @@ final class SQLiteCache extends FileCache
 
         $this->options = array_merge([
             'root' => $root,
-            'extension' => 'sqlite',
             'debug' => \option('debug'),
+            'store' => \option('bnomei.sqlite-cachedriver.store', true),
             'pragmas-construct' => \option('bnomei.sqlite-cachedriver.pragmas-construct'),
             'pragmas-destruct' => \option('bnomei.sqlite-cachedriver.pragmas-destruct'),
         ], $options);
+
+        // overwrite *.cache in all constructors
+        $this->options['extension'] = 'sqlite';
 
         foreach ($this->options as $key => $call) {
             if (!is_string($call) && is_callable($call) && in_array($key, [

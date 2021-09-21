@@ -145,7 +145,6 @@ final class SQLiteCache extends FileCache
             $value = $value ? Value::fromJson($value) : null;
         }
         return $value;
-
     }
 
     public function get(string $key, $default = null)

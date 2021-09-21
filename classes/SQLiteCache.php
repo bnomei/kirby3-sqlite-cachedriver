@@ -93,9 +93,11 @@ final class SQLiteCache extends FileCache
      */
     public function set(string $key, $value, int $minutes = 0): bool
     {
+        /* SHOULD SET EVEN IN DEBUG
         if ($this->option('debug')) {
             return true;
         }
+        */
 
         return $this->removeAndSet($key, $value, $minutes);
     }

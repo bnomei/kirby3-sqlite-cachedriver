@@ -95,6 +95,14 @@ Use [Kirby 3 Boost](https://github.com/bnomei/kirby3-boost) to setup a cache for
 
 The plugin comes with aggressive defaults for SQLite Pragmas to optimize for performance. You can change these in the settings if you need to.
 
+## Settings
+
+| bnomei.sqlite-cachedriver.            | Default        | Description               |            
+|---------------------------|----------------|---------------------------|
+| store | `true` | keep accessed cache items stored in PHP memory for faster recurring access  |
+| pragmas-construct | `callback` | array of pragma statements  |
+| pragmas-destruct | `callback` | array of pragma statements  |
+
 ## Dependencies
 
 - PHP SQLite extension. version 3.7.x or better.

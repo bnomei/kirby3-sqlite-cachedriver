@@ -71,7 +71,7 @@ file : 0.11837792396545
 
 ### No cache when debugging
 
-When Kirbys global debug config is set to `true` the complete plugin cache will be flushed and no caches will be created. This will make you live easier – trust me.
+When Kirbys global debug config is set to `true` the complete plugin cache will be flushed and no caches will be read. But entries will be created. This will make you live easier – trust me.
 
 ### How to use Feather with Lapse or Boost
 

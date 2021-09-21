@@ -35,6 +35,9 @@ final class SQLiteCache extends FileCache
      */
     private $selectStatement;
 
+    /** @var array $store */
+    private $store;
+
     /**
      * @var int
      */
@@ -100,6 +103,7 @@ final class SQLiteCache extends FileCache
     {
         $this->remove($key);
 
+        $key = $this->key($key);
         $value = new Value($value, $minutes);
         $expire = $value->expires();
         $data = htmlspecialchars($value->toJson(), ENT_QUOTES);
@@ -119,16 +123,22 @@ final class SQLiteCache extends FileCache
      */
     public function retrieve(string $key, bool $withTransaction = true): ?Value
     {
-        $this->selectStatement->bindValue(':id', $key, SQLITE3_TEXT);
-        $this->selectStatement->bindValue(':expire_at', time(), SQLITE3_INTEGER);
-        $results = $this->selectStatement->execute()->fetchArray(SQLITE3_ASSOC);
-        $this->selectStatement->clear();
-        $this->selectStatement->reset();
-        if ($results === false) {
-            return null;
+        $key = $this->key($key);
+
+        $value = A::get($this->store, $key);
+        if (!$value) {
+            $this->selectStatement->bindValue(':id', $key, SQLITE3_TEXT);
+            $this->selectStatement->bindValue(':expire_at', time(), SQLITE3_INTEGER);
+            $results = $this->selectStatement->execute()->fetchArray(SQLITE3_ASSOC);
+            $this->selectStatement->clear();
+            $this->selectStatement->reset();
+            if ($results === false) {
+                return null;
+            }
+            $value = htmlspecialchars_decode(strval($results['data']));
         }
-        $json = htmlspecialchars_decode(strval($results['data']));
-        return Value::fromJson($json);
+        
+        return $value ? Value::fromJson($value) : null;
     }
 
 
@@ -146,6 +156,12 @@ final class SQLiteCache extends FileCache
      */
     public function remove(string $key): bool
     {
+        $key = $this->key($key);
+
+        if (array_key_exists($key, $this->store)) {
+            unset($this->store[$key]);
+        }
+
         $this->deleteStatement->bindValue(':id', $key, SQLITE3_TEXT);
         $this->deleteStatement->execute();
         $this->deleteStatement->clear();
@@ -159,6 +175,7 @@ final class SQLiteCache extends FileCache
      */
     public function flush(): bool
     {
+        $this->store = [];
         kirby()->cache('bnomei.sqlite-cachedriver')->remove(static::DB_VALIDATE . static::DB_VERSION);
         $success = $this->database->exec("DELETE FROM cache WHERE id != '' ");
 

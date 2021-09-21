@@ -72,12 +72,12 @@ final class SQliteTest extends TestCase
             $this->assertTrue($this->cache->set(strval($i), time()));
         }
         $this->cache->endTransaction();
-        $this->assertEquals($count + 1, $this->cache->transactionsCount());
+        $this->assertEquals(0, $this->cache->transactionsCount());
 
         // select from running transaction
         $this->assertIsInt($this->cache->get('1'));
         $this->assertIsInt($this->cache->get('2'));
-        $this->assertEquals($count + 1, $this->cache->transactionsCount());
+        $this->assertEquals(0, $this->cache->transactionsCount());
     }
 
     public function testJSONValue()
@@ -133,6 +133,7 @@ final class SQliteTest extends TestCase
 
     public function testBenchmark()
     {
+        $this->cache->flush();
         $this->cache->benchmark(1000);
         unset($this->cache); // will happen at end of pageview
         $this->assertTrue(true);

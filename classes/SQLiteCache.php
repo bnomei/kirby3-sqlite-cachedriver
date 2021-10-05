@@ -109,7 +109,7 @@ final class SQLiteCache extends FileCache
         $key = $this->key($key);
         $value = new Value($value, $minutes);
 
-        if ($this->option('store')) {
+        if ($this->option('store') && strstr($key, $this->option('store-ignore')) === false) {
             $this->store[$key] = $value;
         }
 
@@ -274,6 +274,7 @@ final class SQLiteCache extends FileCache
             'root' => $root,
             'debug' => \option('debug'),
             'store' => \option('bnomei.sqlite-cachedriver.store', true),
+            'store-ignore' => \option('bnomei.sqlite-cachedriver.store-ignore'),
             'pragmas-construct' => \option('bnomei.sqlite-cachedriver.pragmas-construct'),
             'pragmas-destruct' => \option('bnomei.sqlite-cachedriver.pragmas-destruct'),
         ], $options);

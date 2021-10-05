@@ -100,6 +100,7 @@ The plugin comes with aggressive defaults for SQLite Pragmas to optimize for per
 | bnomei.sqlite-cachedriver.            | Default        | Description               |            
 |---------------------------|----------------|---------------------------|
 | store | `true` | keep accessed cache items stored in PHP memory for faster recurring access  |
+| store-ignore | `` | if key contains that string then ignore  |
 | pragmas-construct | `callback` | array of pragma statements  |
 | pragmas-destruct | `callback` | array of pragma statements  |
 

@@ -17,6 +17,7 @@ Kirby::plugin('bnomei/sqlite-cachedriver', [
     'options' => [
         'cache' => true, // create cache folder
         'store' => true, // php memory cache
+        'store-ignore' => '', // if contains then ignore
         // https://sqlite.org/pragma.html
         'pragmas-construct' => function () {
             $defaults = [

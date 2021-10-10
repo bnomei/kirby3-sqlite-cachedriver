@@ -109,7 +109,7 @@ final class SQLiteCache extends FileCache
         $key = $this->key($key);
         $value = new Value($value, $minutes);
 
-        if ($this->option('store') && strstr($key, $this->option('store-ignore')) === false) {
+        if ($this->option('store') && str_contains($key, $this->option('store-ignore')) === false) {
             $this->store[$key] = $value;
         }
 
@@ -145,7 +145,7 @@ final class SQLiteCache extends FileCache
             }
             $value = htmlspecialchars_decode(strval($results['data']));
             $value = $value ? Value::fromJson($value) : null;
-            if ($this->option('store') && strstr($key, $this->option('store-ignore')) === false) {
+            if ($this->option('store') && str_contains($key, $this->option('store-ignore')) === false) {
                 $this->store[$key] = $value;
             }
         }

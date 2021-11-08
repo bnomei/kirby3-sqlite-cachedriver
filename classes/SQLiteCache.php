@@ -14,7 +14,7 @@ use SQLite3Stmt;
 
 final class SQLiteCache extends FileCache
 {
-    public const DB_VERSION = '1';
+    public const DB_VERSION = '2';
     public const DB_FILENAME = 'sqlitecache-';
     public const DB_VALIDATE = 'sqlitecache-';
 
@@ -143,7 +143,7 @@ final class SQLiteCache extends FileCache
             if ($results === false) {
                 return null;
             }
-            $value = htmlspecialchars_decode(strval($results['data']));
+            $value = htmlspecialchars_decode(strval($results['data']), ENT_QUOTES);
             $value = $value ? Value::fromJson($value) : null;
             if ($this->option('store') && str_contains($key, $this->option('store-ignore')) === false) {
                 $this->store[$key] = $value;

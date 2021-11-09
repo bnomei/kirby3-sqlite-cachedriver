@@ -14,7 +14,7 @@ use SQLite3Stmt;
 
 final class SQLiteCache extends FileCache
 {
-    public const DB_VERSION = '2';
+    public const DB_VERSION = '1';
     public const DB_FILENAME = 'sqlitecache-';
     public const DB_VALIDATE = 'sqlitecache-';
 

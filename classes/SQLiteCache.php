@@ -129,7 +129,7 @@ final class SQLiteCache extends FileCache
     /**
      * @inheritDoc
      */
-    public function retrieve(string $key, bool $withTransaction = true): ?Value
+    public function retrieve(string $key): ?Value
     {
         $key = $this->key($key);
 

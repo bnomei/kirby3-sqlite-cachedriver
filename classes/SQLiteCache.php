@@ -57,13 +57,7 @@ final class SQLiteCache extends FileCache
         $this->prepareStatements();
         $this->store = [];
 
-        register_shutdown_function(function() {
-            if ($this->database) {
-                $this->applyPragmas('pragmas-destruct');
-                $this->database->close();
-                $this->database = null;
-            }
-        });
+        
 
         if ($this->options['debug']) {
             $this->flush();
@@ -76,15 +70,24 @@ final class SQLiteCache extends FileCache
         $this->garbagecollect();
     }
 
-    /* NOTE: does not work relieable enough using register_shutdown_function instead
+    public function register_shutdown_function($callback) {
+        $this->shutdownCallbacks[] = $callback;
+    }
+
     public function __destruct()
     {
+        foreach($this->shutdownCallbacks as $callback) {
+            if (!is_string($callback) && is_callable($callback)) {
+                $callback();
+            }
+        }
+
         if ($this->database) {
             $this->applyPragmas('pragmas-destruct');
             $this->database->close();
+            $this->database = null;
         }
     }
-    */
 
     /**
      * @param string|null $key

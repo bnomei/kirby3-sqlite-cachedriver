@@ -18,6 +18,9 @@ final class SQLiteCache extends FileCache
     public const DB_FILENAME = 'sqlitecache-';
     public const DB_VALIDATE = 'sqlitecache-';
 
+
+    private $shutdownCallbacks = [];
+
     /**
      * @var SQLite3
      */

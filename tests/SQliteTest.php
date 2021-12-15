@@ -66,18 +66,18 @@ final class SQliteTest extends TestCase
     public function testTransaction()
     {
         // push into the transaction
-        $count = $this->cache->transactionsCount();
+        $count = $this->cache->hasOpenTransaction();
         $this->cache->beginTransaction();
         for ($i = 0; $i < 10; $i++) {
             $this->assertTrue($this->cache->set(strval($i), time()));
         }
         $this->cache->endTransaction();
-        $this->assertEquals(0, $this->cache->transactionsCount());
+        $this->assertEquals(0, $this->cache->hasOpenTransaction());
 
         // select from running transaction
         $this->assertIsInt($this->cache->get('1'));
         $this->assertIsInt($this->cache->get('2'));
-        $this->assertEquals(0, $this->cache->transactionsCount());
+        $this->assertEquals(0, $this->cache->hasOpenTransaction());
     }
 
     public function testJSONValue()

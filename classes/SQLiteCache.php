@@ -48,7 +48,6 @@ final class SQLiteCache extends FileCache
     /**
      * @var int
      */
-    private $transactionsCount = 0;
     private $transactionOpen = false;
 
     public function __construct(array $options = [])
@@ -309,19 +308,21 @@ final class SQLiteCache extends FileCache
 
     public function beginTransaction()
     {
-        if ($this->transactionOpen) {
+        if ($this->transactionOpen === true) {
             return;
         }
-        
+
         $this->database->exec("BEGIN TRANSACTION;");
-        $this->transactionsCount++;
         $this->transactionOpen = true;
     }
 
     public function endTransaction()
     {
+        if ($this->transactionOpen === false) {
+            return;
+        }
+
         $this->database->exec("END TRANSACTION;");
-        $this->transactionsCount = 0;
         $this->transactionOpen = false;
     }
 
@@ -333,9 +334,9 @@ final class SQLiteCache extends FileCache
         $this->updateStatement = $this->database->prepare("UPDATE cache SET expire_at = :expire_at, data = :data WHERE id = :id");
     }
 
-    public function transactionsCount(): int
+    public function hasOpenTransaction(): bool
     {
-        return $this->transactionsCount;
+        return $this->transactionOpen;
     }
 
     public function benchmark(int $count = 10)

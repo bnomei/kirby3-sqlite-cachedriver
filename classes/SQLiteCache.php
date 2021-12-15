@@ -64,10 +64,6 @@ final class SQLiteCache extends FileCache
 
         if ($this->options['debug']) {
             $this->flush();
-        } else {
-            if ($this->validate() === false) {
-                throw new \Exception('SQLite Cache Driver failed to read/write. Check SQLite binary version ('.SQLite3::version()['versionString'].') or adjust pragmas used by plugin.');
-            }
         }
         
         $this->garbagecollect();
@@ -212,25 +208,6 @@ final class SQLiteCache extends FileCache
         */
 
         return $success;
-    }
-
-    public function validate(): bool
-    {
-        $validate = static::DB_VALIDATE . static::DB_VERSION;
-        if (kirby()->cache('bnomei.sqlite-cachedriver')->get($validate)) {
-            return $this->get($validate) != null;
-        }
-
-        $time = time();
-        $this->removeAndSet($validate, $time, 0);
-        kirby()->cache('bnomei.sqlite-cachedriver')->set($validate, $time, 0);
-        
-        // a get() is not perfect will not help since it might be just in memory
-        // but the file created by file cache can be checked on next request
-        // $this->get() will no work with debug mode but we need that in case of exceptions
-        // return $this->get($validate) != null;
-        // so we use parent which has no debug check clause
-        return parent::get($validate) != null;
     }
 
     public function garbagecollect(): bool

@@ -37,6 +37,10 @@ final class SQLiteCache extends FileCache
      * @var SQLite3Stmt
      */
     private $selectStatement;
+    /**
+     * @var SQLite3Stmt
+     */
+    private $updateStatement;
 
     /** @var array $store */
     private $store;
@@ -60,12 +64,12 @@ final class SQLiteCache extends FileCache
         $this->prepareStatements();
         $this->store = [];
 
-        
+        $this->beginTransaction();
 
         if ($this->options['debug']) {
             $this->flush();
         }
-        
+
         $this->garbagecollect();
     }
 
@@ -82,6 +86,7 @@ final class SQLiteCache extends FileCache
         }
 
         if ($this->database) {
+            $this->endTransaction();
             $this->applyPragmas('pragmas-destruct');
             $this->database->close();
             $this->database = null;
@@ -111,31 +116,50 @@ final class SQLiteCache extends FileCache
         }
         */
 
-        return $this->removeAndSet($key, $value, $minutes);
+        return $this->updateOrInsert($key, $value, $minutes);
     }
 
-    private function removeAndSet(string $key, $value, int $minutes = 0): bool
+    private function updateOrInsert(string $key, $value, int $minutes = 0): bool
     {
-        $this->remove($key);
-
+        $rawKey = $key;
         $key = $this->key($key);
         $value = new Value($value, $minutes);
-
-        if ($this->option('store') && str_contains($key, $this->option('store-ignore')) === false) {
-            $this->store[$key] = $value;
-        }
-
         $expire = $value->expires();
         $data = htmlspecialchars($value->toJson(), ENT_QUOTES);
 
-        $this->insertStatement->bindValue(':id', $key, SQLITE3_TEXT);
-        $this->insertStatement->bindValue(':expire_at', $expire ?? 0, SQLITE3_INTEGER);
-        $this->insertStatement->bindValue(':data', $data, SQLITE3_TEXT);
-        $this->insertStatement->execute();
-        $this->insertStatement->clear();
-        $this->insertStatement->reset();
+        if ($this->existsEvenIfExpired($rawKey)) {
+            $this->updateStatement->bindValue(':id', $key, SQLITE3_TEXT);
+            $this->updateStatement->bindValue(':expire_at', $expire ?? 0, SQLITE3_INTEGER);
+            $this->updateStatement->bindValue(':data', $data, SQLITE3_TEXT);
+            $this->updateStatement->execute();
+            $this->updateStatement->clear();
+            $this->updateStatement->reset();
+        } else {
+            $this->insertStatement->bindValue(':id', $key, SQLITE3_TEXT);
+            $this->insertStatement->bindValue(':expire_at', $expire ?? 0, SQLITE3_INTEGER);
+            $this->insertStatement->bindValue(':data', $data, SQLITE3_TEXT);
+            $this->insertStatement->execute();
+            $this->insertStatement->clear();
+            $this->insertStatement->reset();
+        }
+
+        if ($this->option('store') && (empty($this->option('store-ignore')) || str_contains($key, $this->option('store-ignore')) === false)) {
+            $this->store[$key] = $value;
+        }
 
         return true;
+    }
+
+    private function existsEvenIfExpired(string $key): bool
+    {
+        $key = $this->key($key);
+
+        $this->selectStatement->bindValue(':id', $key, SQLITE3_TEXT);
+        $results = $this->selectStatement->execute()->fetchArray(SQLITE3_ASSOC);
+        $this->selectStatement->clear();
+        $this->selectStatement->reset();
+
+        return $results !== false;
     }
 
     /**
@@ -148,7 +172,6 @@ final class SQLiteCache extends FileCache
         $value = A::get($this->store, $key);
         if ($value === null) {
             $this->selectStatement->bindValue(':id', $key, SQLITE3_TEXT);
-            $this->selectStatement->bindValue(':expire_at', time(), SQLITE3_INTEGER);
             $results = $this->selectStatement->execute()->fetchArray(SQLITE3_ASSOC);
             $this->selectStatement->clear();
             $this->selectStatement->reset();
@@ -157,7 +180,8 @@ final class SQLiteCache extends FileCache
             }
             $value = htmlspecialchars_decode(strval($results['data']), ENT_QUOTES);
             $value = $value ? Value::fromJson($value) : null;
-            if ($this->option('store') && str_contains($key, $this->option('store-ignore')) === false) {
+
+            if ($this->option('store') && (empty($this->option('store-ignore')) || str_contains($key, $this->option('store-ignore')) === false)) {
                 $this->store[$key] = $value;
             }
         }
@@ -200,12 +224,6 @@ final class SQLiteCache extends FileCache
         $this->store = [];
         kirby()->cache('bnomei.sqlite-cachedriver')->remove(static::DB_VALIDATE . static::DB_VERSION);
         $success = $this->database->exec("DELETE FROM cache WHERE id != '' ");
-
-        /*
-        if ($this->validate() === false) {
-            throw new \Exception('SQLite Cache Driver failed to read/write. Check SQLite binary version ('.SQLite3::version()['versionString'].') or adjust pragmas used by plugin.');
-        }
-        */
 
         return $success;
     }
@@ -302,9 +320,10 @@ final class SQLiteCache extends FileCache
 
     private function prepareStatements()
     {
-        $this->selectStatement = $this->database->prepare("SELECT data FROM cache WHERE id = :id AND expire_at <= :expire_at");
+        $this->selectStatement = $this->database->prepare("SELECT data FROM cache WHERE id = :id");
         $this->insertStatement = $this->database->prepare("INSERT INTO cache (id, expire_at, data) VALUES (:id, :expire_at, :data)");
         $this->deleteStatement = $this->database->prepare("DELETE FROM cache WHERE id = :id");
+        $this->updateStatement = $this->database->prepare("UPDATE cache SET expire_at = :expire_at, data = :data WHERE id = :id");
     }
 
     public function transactionsCount(): int

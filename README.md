@@ -1,13 +1,10 @@
 # 🪶  Kirby SQLite Cache-Driver
 
-![Release](https://flat.badgen.net/packagist/v/bnomei/kirby3-sqlite-cachedriver?color=ae81ff)
-![Downloads](https://flat.badgen.net/packagist/dt/bnomei/kirby3-sqlite-cachedriver?color=272822)
-[![Build Status](https://flat.badgen.net/travis/bnomei/kirby3-sqlite-cachedriver)](https://travis-ci.com/bnomei/kirby3-sqlite-cachedriver)
-[![Coverage Status](https://flat.badgen.net/coveralls/c/github/bnomei/kirby3-sqlite-cachedriver)](https://coveralls.io/github/bnomei/kirby3-sqlite-cachedriver) 
-[![Maintainability](https://flat.badgen.net/codeclimate/maintainability/bnomei/kirby3-sqlite-cachedriver)](https://codeclimate.com/github/bnomei/kirby3-sqlite-cachedriver) 
-[![Twitter](https://flat.badgen.net/badge/twitter/bnomei?color=66d9ef)](https://twitter.com/bnomei)
+![Release](https://flat.badgen.net/packagist/v/bnomei/kirby3-sqlite-cachedriver?color=ae81ff&icon=github&label)
+[![Discord](https://flat.badgen.net/badge/discord/bnomei?color=7289da&icon=discord&label)](https://discordapp.com/users/bnomei)
+[![Buymecoffee](https://flat.badgen.net/badge/icon/donate?icon=buymeacoffee&color=FF813F&label)](https://www.buymeacoffee.com/bnomei)
 
-Feather - a highly performant SQLite Cache Driver for Kirby 3
+Feather - a highly performant SQLite Cache Driver for Kirby
 
 ## Installation
 
@@ -19,13 +16,13 @@ Feather - a highly performant SQLite Cache Driver for Kirby 3
 
 ### Memcached < File < Redis < SQLite < APCu
 
-Kirby ships with built in support for File, Memcached and APCu Cache Drivers. I created a [Redis Cache Driver](https://github.com/bnomei/kirby3-redis-cachedriver) which is imho best suited for larger caches. If your hosting does not support Memcached, APCu or Redis then your next best choice is this SQLite Cache Driver.
+Kirby ships with built-in support for File, Memcached, and APCu Cache Drivers. I created a [Redis Cache Driver](https://github.com/bnomei/kirby3-redis-cachedriver), which is best suited for larger caches. If your hosting does not support Memcached, APCu, or Redis, then your next best choice is this SQLite Cache Driver.
 
 ### 2 is enough and about 35% faster
 
-Let's imaging this typical scenario: During a single pageview you need to access, 100 cached values. Some of them already exist, some not, some need to be refreshed and yet others need to be deleted. 
-With a File Cache this would cause at least 100 filesystem operations in total. Using this SQLite Cache you will have only 1 file read and maybe 1 file write per pageview no matter how many values you get, update or remove. ✌️
-But reading and writing data to SQLite is not instantaneous, so it will be [at least 35% faster](https://www.hwaci.com/sw/sqlite/fasterthanfs.html).
+Let's imagine this typical scenario: During a single pageview, you need to access 100 cached values. Some of them already exist, some don't, some need to be refreshed, and yet others need to be deleted. 
+A File Cache would cause at least 100 filesystem operations in total. Using this SQLite Cache you will have only one file read and one file write per pageview no matter how many values you get, update or remove. ✌️
+However, reading and writing data to SQLite is not instantaneous so that it will be [at least 35% faster](https://www.hwaci.com/sw/sqlite/fasterthanfs.html).
 
 ## Usage 
 
@@ -57,11 +54,11 @@ file : 0.11837792396545
 
 ### No cache when debugging
 
-When Kirbys global debug config is set to `true` the complete plugin cache will be flushed and no caches will be read. But entries will be created. This will make you live easier – trust me.
+When Kirby's global debug config is set to `true`, the complete plugin cache will be flushed, and no caches will be read. But entries will be created. This will make you live easier – trust me.
 
 ### How to use Feather with Lapse or Boost
 
-You need to set the cache driver for the [lapse plugin](https://github.com/bnomei/kirby3-lapse) to `sqlite`.
+You must set the cache driver for the [lapse plugin](https://github.com/bnomei/kirby3-lapse) to `sqlite`.
 
 **site/config/config.php**
 ```php
@@ -75,7 +72,7 @@ return [
 
 ### Setup Content-File Cache
 
-Use [Kirby 3 Boost](https://github.com/bnomei/kirby3-boost) to setup a cache for content files.
+Use [Kirby Boost](https://github.com/bnomei/kirby3-boost) to set up a cache for content files.
 
 ### Pragmas
 

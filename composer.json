@@ -1,7 +1,7 @@
 {
   "name": "bnomei/kirby3-sqlite-cachedriver",
   "type": "kirby-plugin",
-  "version": "1.4.2",
+  "version": "6.0.0",
   "description": "SQLite based Cache-Driver",
   "license": "MIT",
   "authors": [
@@ -58,7 +58,10 @@
     ]
   },
   "extra": {
-    "kirby-cms-path": "tests/kirby"
+    "kirby-cms-path": "tests/kirby",
+    "kirby": {
+      "compatible": "^3.5 || ^4.0 || ^5.0 || ^6.0"
+    }
   },
   "suggest": {
     "bnomei/kirby3-boost": "Boost the speed of Kirby by having content files of pages (mem-)cached, with automatic unique ID, fast lookup and Tiny-URL.",
